@@ -3,24 +3,27 @@ from selenium import webdriver
 import os.path
 
 ## keywords to look for
-keywords = ['available', 'lookbook', 'EST', 'PST']
+keywords = ['available', 'lookbook', 'EST', 'PST', 'drop', 'dropping']
 
-def instagram_scrape():
+def instagram_scrape(instgrams):
 	driver = webdriver.Firefox()
-	driver.get("https://instagram.com/phntmsrc")
-	source_html = driver.page_source
-	soup = BeautifulSoup(source_html)
-	images = soup.find_all('img')
+	for instagram in instgrams: 
+		url = "https://instagram.com/" + instagram
+		driver.get(url)
+		source_html = driver.page_source
+		soup = BeautifulSoup(source_html)
+		images = soup.find_all('img')
 
-	check_hype(images)	
-	update_visited(images)
+		check_hype(images, instagram)	
+		update_visited(images, instagram)
 
 	driver.close()
 
-def check_hype(images):
+def check_hype(images, instagram):
+	visited_file = 'scrapers/instagram/visited_' + instagram + '.txt'
 	old_visited = []
-	if os.path.exists('scrapers/instagram/visited.txt'):
-		old_visited = [post.rstrip('\n') for post in open('visited.txt')]
+	if os.path.exists(visited_file):
+		old_visited = [post.rstrip('\n') for post in open(visited_file)]
 	for image in images: 
 		if image.get('src') not in old_visited:
 			image_desc = image.get('alt', '')	
@@ -32,8 +35,9 @@ def check_hype(images):
 					print('IMAGE LINK IS: ' + image.get('src'))
 					break
 			
-def update_visited(images):
-	new_visited = open('scrapers/instagram/visited.txt', 'w')
+def update_visited(images, instagram):
+	visited_file = 'scrapers/instagram/visited_' + instagram + '.txt'
+	new_visited = open(visited_file, 'w')
 	for image in images:
 		image_src = image.get('src')		
 		print('writing ' + image_src + ' to visited file\n')
