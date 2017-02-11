@@ -87,3 +87,9 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# visited files
+scrapers/instagram/*.txt
+
+# ignore vim swp file
+*.swp

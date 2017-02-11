@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver
+import os.path
 
 ## keywords to look for
 keywords = ['available', 'lookbook', 'EST', 'PST']
@@ -17,7 +18,9 @@ def scrape():
 	driver.close()
 
 def check_hype(images):
-	old_visited = [post.rstrip('\n') for post in open('visited.txt')]
+	old_visited = []
+	if os.path.exists('visited.txt'):
+		old_visited = [post.rstrip('\n') for post in open('visited.txt')]
 	for image in images: 
 		if image.get('src') not in old_visited:
 			image_desc = image.get('alt', '')	
